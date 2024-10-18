@@ -24,7 +24,7 @@ const Navbar = () => {
         "/logout",
         {},
         {
-          headers: { 'Authorization': `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       localStorage.removeItem("token");
@@ -37,12 +37,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 h-16 fixed top-0 w-full items">
+    <nav className="bg-gray-100 h-16 fixed top-0 w-full items">
       <div className="flex justify-between p-4">
-        <div className="text-white flex items-center">MyLogo.png</div>
-        <div className="text-gray-50 flex flex-row gap-2 justify-evenly">
-          <ActionButton name="Post" />
-          <ActionButton name="Login" />
+        <div className="text-gray-900 flex items-center">MyLogo.png</div>
+        <div className="text-gray-500 flex flex-row gap-2 justify-evenly">
+          <ActionButton name="Posts" />
+          <ActionButton name="Minhas curtidas" />
           <Popover>
             <PopoverTrigger>
               <CircleUserRound />
@@ -50,7 +50,7 @@ const Navbar = () => {
             <PopoverContent className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col items-start">
-                  <span className="block text-sm text-gray-900 dark:text-white">
+                  <span className="block text-sm text-gray-900 dark:text-gray-900">
                     Murilo Vantini
                   </span>
                   <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
