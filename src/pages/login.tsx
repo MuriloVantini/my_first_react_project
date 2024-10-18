@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
     Form,
     FormControl,
@@ -10,7 +12,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import myAxios from "@/api/axiosInstance";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -21,6 +23,7 @@ const formSchema = z.object({
 })
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -29,8 +32,26 @@ const LoginPage = () => {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const result = await myAxios.post('/login', values);
+
+            console.log(result);
+            // const result = await auth.login('/login', values);
+
+            if (result.data.token !== '') {
+                // Navega para a dashboard se o login for bem-sucedido
+                navigate('/home');
+            } else {
+                // Se o resultado não for uma string ou o login falhar
+                form.setError('email', { type: 'manual', message: 'Email ou senha incorretos.' });
+                form.setError('password', { type: 'manual', message: 'Email ou senha incorretos.' });
+            }
+        } catch (error) {
+            console.error('Erro na autenticação:', error);
+            // Configura o erro no formulário
+            form.setError('email', { type: 'manual', message: 'Erro no servidor. Tente novamente mais tarde.' });
+        }
     }
     return (
 
@@ -56,7 +77,7 @@ const LoginPage = () => {
                         <FormItem>
                             <FormLabel>Senha</FormLabel>
                             <FormControl>
-                                <Input placeholder="*******" {...field} />
+                                <Input type="password" placeholder="*******" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
