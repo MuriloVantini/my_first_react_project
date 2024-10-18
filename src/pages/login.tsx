@@ -42,7 +42,7 @@ const LoginPage = () => {
             if (result.data.token !== '') {
                 // Navega para a dashboard se o login for bem-sucedido
                 localStorage.setItem('token', result.data.token);
-                navigate('/home');
+                navigate('/');
             } else {
                 // Se o resultado não for uma string ou o login falhar
                 form.setError('email', { type: 'manual', message: 'Email ou senha incorretos.' });
