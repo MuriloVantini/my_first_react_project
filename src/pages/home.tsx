@@ -1,28 +1,45 @@
+import myAxios from "@/api/axiosInstance";
 import { Button } from "@/components/ui/button";
+import PostModel from "@/model/postModel";
 import { Eye } from "lucide-react";
-
-const data = {
-  id: 1,
-  title: "Título do Post",
-  description: "Descrição do Post",
-  image:
-    "https://images.unsplash.com/photo-1728996152930-233c5aca21d7?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-};
-const data2 = {
-  id: 1,
-  title: "Título do Post",
-  description: "Descrição do Post",
-  image:
-    "https://images.unsplash.com/photo-1721332155484-5aa73a54c6d2?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-};
-
-const datas = [data, data2, data, data2, data, data2, data, data2, data2, data, data];
+import { useEffect, useState } from "react";
 
 const HomePage = () => {
+  const [posts, setPosts] = useState<PostModel[]>([]); // Estado para armazenar os dados
+  const [loading, setLoading] = useState(true); // Estado para indicar carregamento
+  const [error, setError] = useState(""); // Estado para erros
+  const token = localStorage.getItem('token');
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await myAxios.get(
+          "/post",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );; // Substitua pela URL da sua API
+        if (response.status !== 200) {
+          setError("Erro ao buscar dados"); // Lidar com erros de resposta
+        }
+        console.log(response.data.data);
+        setPosts(response.data.data); // Supondo que os dados estejam sob a chave "chapters"
+      } catch (error) {
+        setError(error as string); // Captura e armazena o erro
+      } finally {
+        setLoading(false); // Indica que o carregamento foi concluído
+      }
+    };
+
+    fetchData(); // Chama a função para buscar os dados
+  }, []); // O array vazio significa que o efeito será executado apenas uma vez, quando o componente for montado
+
+  if (loading) return <div className="p-52">Carregando...</div>; // Mensagem de carregamento
+  if (error) return <div>Erro: {error}</div>;
   return (
     <div className="py-40">
       <div className="flex flex-wrap justify-center gap-4">
-        {datas.map((item) => (
+        {posts.map((item) => (
           <div
             key={item.id}
             className="max-w-sm rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4"
