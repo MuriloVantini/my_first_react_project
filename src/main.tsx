@@ -10,11 +10,11 @@ import ProtectedRoute from './api/store/verifyLoggedUser';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App/>,
+    element: <ProtectedRoute child={<App/>}/>,
     children: [
       {
-        path: '/home',
-        element: (<ProtectedRoute child={<HomePage/>}/>)
+        path: '/',
+        element: <HomePage/>
       },
     ],
   },
