@@ -1,4 +1,5 @@
 import ChapterModel from "./chapterModel";
+import CommentModel from "./commentModel";
 
 interface PostModel {
     id: number;
@@ -10,7 +11,8 @@ interface PostModel {
     image: string;
     like_posts_count: number;
     access_count: number;
-    chapters: ChapterModel[]
+    chapters: ChapterModel[];
+    comments: CommentModel[];
 }
 
 export default PostModel;
