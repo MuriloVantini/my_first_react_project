@@ -1,24 +1,22 @@
 import myAxios from "@/api/axiosInstance";
+import CircularLoading from "@/components/loading/circularLoading";
 import { Button } from "@/components/ui/button";
 import PostModel from "@/model/postModel";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const HomePage = () => {
   const [posts, setPosts] = useState<PostModel[]>([]); // Estado para armazenar os dados
   const [loading, setLoading] = useState(true); // Estado para indicar carregamento
   const [error, setError] = useState(""); // Estado para erros
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await myAxios.get(
-          "/post",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );; // Substitua pela URL da sua API
+        const response = await myAxios.get("/post", {
+          headers: { Authorization: `Bearer ${token}` },
+        }); // Substitua pela URL da sua API
         if (response.status !== 200) {
           setError("Erro ao buscar dados"); // Lidar com erros de resposta
         }
@@ -34,7 +32,10 @@ const HomePage = () => {
     fetchData(); // Chama a função para buscar os dados
   }, []); // O array vazio significa que o efeito será executado apenas uma vez, quando o componente for montado
 
-  if (loading) return <div className="p-52">Carregando...</div>; // Mensagem de carregamento
+  if (loading)
+    return (
+      <CircularLoading/>
+    );
   if (error) return <div>Erro: {error}</div>;
   return (
     <div className="py-40">
