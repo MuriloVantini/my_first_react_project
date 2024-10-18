@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import PostModel from "@/model/postModel";
 import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<PostModel[]>([]); // Estado para armazenar os dados
   const [loading, setLoading] = useState(true); // Estado para indicar carregamento
   const [error, setError] = useState(""); // Estado para erros
@@ -20,7 +22,6 @@ const HomePage = () => {
         if (response.status !== 200) {
           setError("Erro ao buscar dados"); // Lidar com erros de resposta
         }
-        console.log(response.data.data);
         setPosts(response.data.data); // Supondo que os dados estejam sob a chave "chapters"
       } catch (error) {
         setError(error as string); // Captura e armazena o erro
@@ -32,11 +33,13 @@ const HomePage = () => {
     fetchData(); // Chama a função para buscar os dados
   }, []); // O array vazio significa que o efeito será executado apenas uma vez, quando o componente for montado
 
-  if (loading)
-    return (
-      <CircularLoading/>
-    );
+  if (loading) return <CircularLoading />;
   if (error) return <div>Erro: {error}</div>;
+
+  const onNavigate = (id: number) => {
+    navigate(`/post/${id}`); // Navega para a rota de detalhes do post
+  };
+
   return (
     <div className="py-40">
       <div className="flex flex-wrap justify-center gap-4">
@@ -57,7 +60,7 @@ const HomePage = () => {
               <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                 {item.description}
               </p>
-              <Button variant="outline">
+              <Button onClick={() => onNavigate(item.id)} variant="outline">
                 <Eye /> Ver post
               </Button>
             </div>
