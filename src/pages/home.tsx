@@ -2,7 +2,7 @@ import myAxios from "@/api/axiosInstance";
 import CircularLoading from "@/components/loading/circularLoading";
 import { Button } from "@/components/ui/button";
 import PostModel from "@/model/postModel";
-import { Eye, Loader2 } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const HomePage = () => {
