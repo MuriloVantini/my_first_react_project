@@ -1,7 +1,7 @@
 import myAxios from "@/api/axiosInstance";
 import CircularLoading from "@/components/loading/circularLoading";
 import { Button } from "@/components/ui/button";
-import PostModel from "@/model/postModel";
+import PostModel from "@/models/postModel";
 import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,20 +18,20 @@ const HomePage = () => {
       try {
         const response = await myAxios.get("/post", {
           headers: { Authorization: `Bearer ${token}` },
-        }); // Substitua pela URL da sua API
+        }); 
         if (response.status !== 200) {
-          setError("Erro ao buscar dados"); // Lidar com erros de resposta
+          setError("Erro ao buscar dados"); 
         }
-        setPosts(response.data.data); // Supondo que os dados estejam sob a chave "chapters"
+        setPosts(response.data.data); 
       } catch (error) {
-        setError(error as string); // Captura e armazena o erro
+        setError(error as string); 
       } finally {
-        setLoading(false); // Indica que o carregamento foi concluído
+        setLoading(false); 
       }
     };
 
-    fetchData(); // Chama a função para buscar os dados
-  }, []); // O array vazio significa que o efeito será executado apenas uma vez, quando o componente for montado
+    fetchData(); 
+  }, []); 
 
   if (loading) return <CircularLoading />;
   if (error) return <div>Erro: {error}</div>;
