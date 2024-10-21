@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import myAxios from "@/api/axiosInstance";
-import PostModel from "@/model/postModel";
+import PostModel from "@/models/postModel";
 import CircularLoading from "@/components/loading/circularLoading";
 
 const ShowPost = () => {

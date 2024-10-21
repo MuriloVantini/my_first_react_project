@@ -37,7 +37,6 @@ const LoginPage = () => {
             const result = await myAxios.post('/login', values);
 
             console.log(result);
-            // const result = await auth.login('/login', values);
 
             if (result.data.token !== '') {
                 // Navega para a dashboard se o login for bem-sucedido
