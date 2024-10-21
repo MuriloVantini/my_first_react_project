@@ -41,8 +41,8 @@ const Navbar = () => {
       <div className="flex justify-between p-4">
         <div className="text-gray-900 flex items-center">MyLogo.png</div>
         <div className="text-gray-500 flex flex-row gap-2 justify-evenly">
-          <ActionButton name="Posts" />
-          <ActionButton name="Minhas curtidas" />
+          <ActionButton params={{'name':"Posts", "linkto": "/"}} />
+          <ActionButton params={{'name':"Minhas Curtidas", "linkto": "/"}} />
           <Popover>
             <PopoverTrigger>
               <CircleUserRound />
