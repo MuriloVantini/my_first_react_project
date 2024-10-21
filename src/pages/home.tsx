@@ -33,7 +33,7 @@ const HomePage = () => {
     fetchData(); 
   }, []); 
 
-  if (loading) return <CircularLoading />;
+  if (loading) return <CircularLoading url={myAxios.defaults.baseURL + "/post"}/>;
   if (error) return <div>Erro: {error}</div>;
 
   const onNavigate = (id: number) => {

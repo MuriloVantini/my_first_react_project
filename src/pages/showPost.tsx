@@ -33,7 +33,8 @@ const ShowPost = () => {
     fetchPost();
   }, [id]);
 
-  if (loading) return <CircularLoading />;
+  if (loading)
+    return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />;
   if (error) return <div>Erro: {error}</div>;
 
   return (
