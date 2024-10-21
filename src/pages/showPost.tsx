@@ -45,7 +45,7 @@ const ShowPost = () => {
         <div>Não possui capítulos</div>
       ) : (
         post?.chapters.map((chapter) => (
-          <div>
+          <div key={chapter.id}>
             <h5>{chapter.title}</h5>
             <p>{chapter.content}</p>
           </div>
@@ -55,16 +55,16 @@ const ShowPost = () => {
         <div>Não possui comentários</div>
       ) : (
         <div>
-            <br/>
-            Comentários
+          <br />
+          Comentários
           {post?.comments.map((comment) => (
-            <div>
+            <div key={comment.id}>
               <h5>{comment.description}</h5>
             </div>
           ))}
         </div>
       )}
-      <br/>
+      <br />
       {post?.like_posts_count} curtidas
     </div>
   );
