@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CommentModel from "@/models/commentModel";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   post_id: z.string(),
@@ -97,7 +98,9 @@ const ShowPost = () => {
           user: { email: "email@example.com", id: -2, name: "Você" },
         };
         setComments((prevComments) => [...prevComments, newComment]);
-        //criar toaster
+        toast("Comentário criado com sucesso", {
+          description: newComment.description,
+        });
       }
     } catch (error) {
       console.error("Erro ao comentar:", error);
@@ -120,7 +123,6 @@ const ShowPost = () => {
         }
       );
       if (result.status === 200) {
-        console.log("status: " + result.status);
         const updatedComment = newComment;
         updatedComment.like_comments_count++;
         setComments((prevComments) =>
@@ -171,29 +173,33 @@ const ShowPost = () => {
               ? comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="flex flex-row gap-2 items-center justify-between mt-2 border border-gray-300 p-2 rounded-md"
+                    className="flex flex-row items-center gap-2 justify-between mt-2 border border-gray-300 p-2 rounded-md"
                   >
-                    <div className="flex flex-col justify-start gap-2">
-                      {/* Usuário que comentou */}
-                      <div className="flex flex-row gap-2">
-                        <UserCircle />
-                        <p> {comment.user.name}</p>
-                      </div>
+                    <div className="w-[90%]">
+                      <div className="flex flex-col justify-start gap-2">
+                        {/* Usuário que comentou */}
+                        <div className="flex flex-row items-center gap-2">
+                          <UserCircle />
+                          <p> {comment.user.name}</p>
+                        </div>
 
-                      {/* Descrição do comentário */}
-                      <div className="flex flex-row gap-2">
-                        <CornerDownRight strokeWidth={0.8} />
-                        <h5>{comment.description} </h5>
+                        {/* Descrição do comentário */}
+                        <div className="flex items-center w-full flex-row gap-2">
+                          <CornerDownRight strokeWidth={0.8} />
+                          <h5 className="break-words w-[90%]">
+                            {comment.description}{" "}
+                          </h5>
+                        </div>
                       </div>
                     </div>
 
                     {/* LikeButton */}
                     <div className="flex flex-row justify-end gap-2">
-                      {<Heart
+                      <Heart
                         className="hover:fill-red-600 hover:stroke-none transition-all hover:cursor-pointer"
                         onClick={() => onLikeComment(comment)}
                         strokeWidth={0.5}
-                      />}
+                      />
                       <p>{comment.like_comments_count}</p>
                     </div>
                   </div>
