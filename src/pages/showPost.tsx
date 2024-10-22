@@ -110,6 +110,30 @@ const ShowPost = () => {
     }
   };
 
+  const onLikeComment = async (newComment: CommentModel) => {
+    try {
+      const result = await myAxios.post(
+        "/like_comment",
+        { comment_id: newComment.id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (result.status === 200) {
+        console.log("status: " + result.status);
+        const updatedComment = newComment;
+        updatedComment.like_comments_count++;
+        setComments((prevComments) =>
+          prevComments.map((oldComment) =>
+            oldComment.id === newComment.id ? updatedComment : oldComment
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao dar like:", error);
+    }
+  };
+
   if (loading)
     return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />;
   if (error) return <div>Erro: {error}</div>;
@@ -150,17 +174,26 @@ const ShowPost = () => {
                     className="flex flex-row gap-2 items-center justify-between mt-2 border border-gray-300 p-2 rounded-md"
                   >
                     <div className="flex flex-col justify-start gap-2">
+                      {/* Usuário que comentou */}
                       <div className="flex flex-row gap-2">
                         <UserCircle />
                         <p> {comment.user.name}</p>
                       </div>
+
+                      {/* Descrição do comentário */}
                       <div className="flex flex-row gap-2">
-                        <CornerDownRight strokeWidth={0.8}/>
+                        <CornerDownRight strokeWidth={0.8} />
                         <h5>{comment.description} </h5>
                       </div>
                     </div>
+
+                    {/* LikeButton */}
                     <div className="flex flex-row justify-end gap-2">
-                      <Heart strokeWidth={1.5} />
+                      {<Heart
+                        className="hover:fill-red-600 hover:stroke-none transition-all hover:cursor-pointer"
+                        onClick={() => onLikeComment(comment)}
+                        strokeWidth={0.5}
+                      />}
                       <p>{comment.like_comments_count}</p>
                     </div>
                   </div>
