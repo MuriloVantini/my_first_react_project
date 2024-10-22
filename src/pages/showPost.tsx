@@ -76,41 +76,45 @@ const ShowPost = () => {
   }, [id]);
 
   const createComment = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const result = await myAxios.post("/comment", values, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      console.log(result);
-
-      if (result.status == 201) {
-        const getCurrentDate = () => new Date().toISOString();
-        const currentDate = getCurrentDate();
-        const tempId = -(comments.length + 1);
-        const newComment: CommentModel = {
-          id: tempId,
-          description: values.description,
-          post_id: post?.id,
-          user_id: -1,
-          created_at: currentDate,
-          updated_at: currentDate,
-          like_comments_count: 0,
-          user: { email: "email@example.com", id: -2, name: "Você" },
-        };
-        setComments((prevComments) => [...prevComments, newComment]);
-        toast("Comentário criado com sucesso", {
-          description: newComment.description,
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao comentar:", error);
-      form.setError("description", {
-        type: "manual",
-        message: "Erro no servidor. Tente novamente mais tarde.",
-      });
-    } finally {
-      setIsCommenting(false);
-    }
+    return new Promise((resolve, reject) => {
+      toast.promise(
+        myAxios.post("/comment", values, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        {
+          loading: "Carregando...",
+          success: (data) => {
+            setTimeout(() => {}, 1000);
+            const getCurrentDate = () => new Date().toISOString();
+            const currentDate = getCurrentDate();
+            const tempId = -(comments.length + 1);
+            const newComment: CommentModel = {
+              id: tempId,
+              description: values.description,
+              post_id: post?.id,
+              user_id: -1,
+              created_at: currentDate,
+              updated_at: currentDate,
+              like_comments_count: 0,
+              user: { email: "email@example.com", id: -2, name: "Você" },
+            };
+            setComments((prevComments) => [...prevComments, newComment]);
+            resolve(data);
+            return "Comentário criado com sucesso";
+          },
+          error: (ex) => {
+            setIsCommenting(false);
+            reject(ex);
+            return (
+              "Erro no servidor. Tente novamente mais tarde."
+            );
+          },
+          finally: () => {
+            setIsCommenting(false);
+          },
+        }
+      );
+    });
   };
 
   const onLikeComment = async (newComment: CommentModel) => {
