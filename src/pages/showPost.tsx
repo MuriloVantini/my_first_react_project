@@ -2,17 +2,47 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import myAxios from "@/api/axiosInstance";
 import PostModel from "@/models/postModel";
+import { useForm } from "react-hook-form";
 import CircularLoading from "@/components/loading/circularLoading";
-import { ArrowDown, Eye, Heart, UserCircle } from "lucide-react";
+import { ArrowDown, ArrowUp, Eye, Heart, Plus, SendIcon, UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CommentModel from "@/models/commentModel";
 
+const formSchema = z.object({
+  post_id: z.string(),
+  description: z.string().min(4, {
+    message: "Comentário deve possuir entre 4 a 200 caracteres.",
+  }),
+});
 const ShowPost = () => {
   //Captura id da rota /post/:id
   const { id } = useParams();
   const [post, setPost] = useState<PostModel | null>(null);
+  const [comments, setComments] = useState<CommentModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentVisibility, setCommentVisibility] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
   const [error, setError] = useState("");
   const token = localStorage.getItem("token");
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      post_id: id,
+      description: "ahahahahhahaha",
+    },
+  });
+
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
@@ -24,6 +54,7 @@ const ShowPost = () => {
           throw new Error("Erro ao buscar post");
         }
         setPost(response.data.data);
+        setComments(response.data.data.comments);
       } catch (error) {
         setError(error as string);
       } finally {
@@ -33,6 +64,40 @@ const ShowPost = () => {
 
     fetchPost();
   }, [id]);
+
+  const createComment = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const result = await myAxios.post("/comment", values, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log(result);
+      
+      if (result.status == 201) {
+        const getCurrentDate = () => new Date().toISOString();
+        const currentDate = getCurrentDate();
+        const tempId = -(comments.length + 1); 
+        const newComment:CommentModel = {id: tempId,
+          description: values.description,
+          post_id: post?.id,
+          user_id: -1,
+          created_at: currentDate,
+          updated_at: currentDate,
+          like_comments_count: 0, 
+          };
+        setComments(prevComments => [...prevComments, newComment]);
+        //criar toaster
+      }
+    } catch (error) {
+      console.error("Erro ao comentar:", error);
+      form.setError("description", {
+        type: "manual",
+        message: "Erro no servidor. Tente novamente mais tarde.",
+      });
+    } finally {
+      setIsCommenting(false);
+    }
+  };
 
   if (loading)
     return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />;
@@ -60,25 +125,76 @@ const ShowPost = () => {
         ) : (
           <div>
             <br />
-            <div
-              className="flex flex-row gap-2 mb-2 p-2 w-32 cursor-pointer hover:bg-gray-300 rounded-md"
+            <Button
+              variant="outline"
               onClick={() => setCommentVisibility(!commentVisibility)}
             >
-              <span>Comentários</span> <ArrowDown />
-            </div>
-
+              <span>Comentários</span>{" "}
+              {commentVisibility ? <ArrowUp /> : <ArrowDown />}
+            </Button>
             {commentVisibility
-              ? post?.comments.map((comment) => (
+              ? comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="flex flex-row gap-2 items-center mb-2 border border-gray-300 p-2 rounded-md"
+                    className="flex flex-row gap-2 items-center mt-2 border border-gray-300 p-2 rounded-md"
                   >
                     <UserCircle /> <h5>{comment.description}</h5>
                   </div>
                 ))
               : null}
+
+            {isCommenting ? (
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(createComment)}
+                  className="space-y-8 pt-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Insira seu comentário..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex flex-row justify-end gap-2">
+                    <Button
+                    type="button"
+                      variant="outline"
+                      onClick={() => setIsCommenting(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="outline"
+                    >
+                      Comentar
+                      <SendIcon/>
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            ) : null}
           </div>
         )}
+        <br />
+        {!isCommenting ? (
+          <div className="flex justify-end">
+          <Button variant="outline" onClick={() => setIsCommenting(true)}>
+            Comentar <Plus />
+          </Button>
+          </div>
+        ) : null}
+
         <br />
         <div className="flex flex-col items-end">
           <div className="flex flex-row items-end justify-end">
