@@ -4,7 +4,16 @@ import myAxios from "@/api/axiosInstance";
 import PostModel from "@/models/postModel";
 import { useForm } from "react-hook-form";
 import CircularLoading from "@/components/loading/circularLoading";
-import { ArrowDown, ArrowUp, Eye, Heart, Plus, SendIcon, UserCircle } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CornerDownRight,
+  Eye,
+  Heart,
+  Plus,
+  SendIcon,
+  UserCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -72,20 +81,22 @@ const ShowPost = () => {
       });
 
       console.log(result);
-      
+
       if (result.status == 201) {
         const getCurrentDate = () => new Date().toISOString();
         const currentDate = getCurrentDate();
-        const tempId = -(comments.length + 1); 
-        const newComment:CommentModel = {id: tempId,
+        const tempId = -(comments.length + 1);
+        const newComment: CommentModel = {
+          id: tempId,
           description: values.description,
           post_id: post?.id,
           user_id: -1,
           created_at: currentDate,
           updated_at: currentDate,
-          like_comments_count: 0, 
-          };
-        setComments(prevComments => [...prevComments, newComment]);
+          like_comments_count: 0,
+          user: { email: "email@example.com", id: -2, name: "Você" },
+        };
+        setComments((prevComments) => [...prevComments, newComment]);
         //criar toaster
       }
     } catch (error) {
@@ -129,69 +140,78 @@ const ShowPost = () => {
               variant="outline"
               onClick={() => setCommentVisibility(!commentVisibility)}
             >
-              <span>Comentários</span>{" "}
+              <span>Comentários</span>
               {commentVisibility ? <ArrowUp /> : <ArrowDown />}
             </Button>
             {commentVisibility
               ? comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="flex flex-row gap-2 items-center mt-2 border border-gray-300 p-2 rounded-md"
+                    className="flex flex-row gap-2 items-center justify-between mt-2 border border-gray-300 p-2 rounded-md"
                   >
-                    <UserCircle /> <h5>{comment.description}</h5>
+                    <div className="flex flex-col justify-start gap-2">
+                      <div className="flex flex-row gap-2">
+                        <UserCircle />
+                        <p> {comment.user.name}</p>
+                      </div>
+                      <div className="flex flex-row gap-2">
+                        <CornerDownRight strokeWidth={0.8}/>
+                        <h5>{comment.description} </h5>
+                      </div>
+                    </div>
+                    <div className="flex flex-row justify-end gap-2">
+                      <Heart strokeWidth={1.5} />
+                      <p>{comment.like_comments_count}</p>
+                    </div>
                   </div>
                 ))
               : null}
-
-            {isCommenting ? (
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(createComment)}
-                  className="space-y-8 pt-4"
-                >
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Insira seu comentário..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="flex flex-row justify-end gap-2">
-                    <Button
-                    type="button"
-                      variant="outline"
-                      onClick={() => setIsCommenting(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="outline"
-                    >
-                      Comentar
-                      <SendIcon/>
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            ) : null}
           </div>
         )}
+        {isCommenting ? (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(createComment)}
+              className="space-y-8 pt-4"
+            >
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Insira seu comentário..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-row justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCommenting(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button type="submit" variant="outline">
+                  Comentar
+                  <SendIcon />
+                </Button>
+              </div>
+            </form>
+          </Form>
+        ) : null}
         <br />
         {!isCommenting ? (
           <div className="flex justify-end">
-          <Button variant="outline" onClick={() => setIsCommenting(true)}>
-            Comentar <Plus />
-          </Button>
+            <Button variant="outline" onClick={() => setIsCommenting(true)}>
+              Comentar <Plus />
+            </Button>
           </div>
         ) : null}
 
