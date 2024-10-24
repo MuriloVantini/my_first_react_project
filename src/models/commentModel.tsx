@@ -8,7 +8,7 @@ interface CommentModel {
   created_at: string;
   updated_at: string;
   like_comments_count: number;
-  user: UserModel;
+  user?: UserModel;
 }
 
 export default CommentModel;

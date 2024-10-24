@@ -96,7 +96,7 @@ const ShowPost = () => {
               created_at: currentDate,
               updated_at: currentDate,
               like_comments_count: 0,
-              user: { email: "email@example.com", id: -2, name: "Você" },
+              user: { email: "email@example.com", id: -2, name: "Você"},
             };
             setComments((prevComments) => [...prevComments, newComment]);
             resolve(data);
@@ -141,8 +141,8 @@ const ShowPost = () => {
   };
 
   if (loading)
-    return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />;
-  if (error) return <div>Erro: {error}</div>;
+    return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />
+  if (error) return <div>Erro: {error}</div>
 
   return (
     <>
@@ -184,7 +184,7 @@ const ShowPost = () => {
                         {/* Usuário que comentou */}
                         <div className="flex flex-row items-center gap-2">
                           <UserCircle />
-                          <p> {comment.user.name}</p>
+                          <p> {comment.user?.name}</p>
                         </div>
 
                         {/* Descrição do comentário */}
