@@ -6,6 +6,7 @@ import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import ProtectedRoute from './api/store/verifyLoggedUser';
 import ShowPost from './pages/showPost';
+import MyProfile from './pages/my_profile';
 
 
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: '/post/:id',
         element: <ShowPost/>
+      },
+      {
+        path: '/profile',
+        element: <MyProfile/>
       },
     ],
   },
