@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem("token");
   const handleLogout = async () => {
@@ -41,10 +42,12 @@ const Navbar = () => {
       <div className="flex justify-between p-4">
         <div className="text-gray-900 flex items-center">MyLogo.png</div>
         <div className="text-gray-500 flex flex-row gap-2 justify-evenly">
-          <ActionButton params={{'name':"Posts", "linkto": "/"}} />
-          <ActionButton params={{'name':"Minhas Curtidas", "linkto": "/"}} />
-          <Popover>
-            <PopoverTrigger>
+          <ActionButton params={{ name: "Posts", linkto: "/" }} />
+          <ActionButton
+            params={{ name: "Minhas Curtidas", linkto: "/profile" }}
+          />
+          <Popover open={open}>
+            <PopoverTrigger onClick={()=>setOpen(true)}>
               <CircleUserRound />
             </PopoverTrigger>
             <PopoverContent className="flex flex-col gap-2">
@@ -59,7 +62,14 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/profile");
+                  }}
+                >
                   <User />
                   Ver perfil
                 </Button>
