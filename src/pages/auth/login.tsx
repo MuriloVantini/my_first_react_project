@@ -69,7 +69,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <Form {...form} >
+      <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 py-44 px-72 "
@@ -104,14 +104,25 @@ const LoginPage = () => {
               </FormItem>
             )}
           />
-          {!form.formState.isSubmitting ? (
-            <Button type="submit">Entrar</Button>
-          ) : (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Carregando
-            </Button>
-          )}
+          <div className="flex justify-between items-center">
+            {!form.formState.isSubmitting ? (
+              <Button type="submit">Entrar</Button>
+            ) : (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Carregando
+              </Button>
+            )}
+            <h2>
+              Não possui uma conta?{" "}
+              <a
+                className="hover:cursor-pointer hover:underline"
+                onClick={() => navigate("/register")}
+              >
+                <strong>Registre-se</strong>
+              </a>
+            </h2>
+          </div>
         </form>
       </Form>
       <Toaster

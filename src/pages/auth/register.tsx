@@ -18,12 +18,20 @@ import { Loader2 } from "lucide-react";
 
 const formSchema = z
   .object({
-    name: z.string().trim(),
-    email: z.string().email(),
+    name: z
+      .string()
+      .min(3, { message: "Insira um nome que contenha ao menos 3 caracteres." })
+      .trim(),
+    email: z
+      .string()
+      .min(1, { message: "Insira um e-mail." })
+      .email("E-mail inválido."),
     password: z.string().min(8, {
       message: "Insira uma senha de pelo menos 8 caracteres.",
     }),
-    password_confirmation: z.string(),
+    password_confirmation: z.string().min(8, {
+      message: "Insira uma senha de pelo menos 8 caracteres.",
+    }),
   })
   .superRefine(({ password, password_confirmation }, ctx) => {
     if (password !== password_confirmation) {
@@ -89,7 +97,7 @@ const RegisterPage = () => {
             error = "Senhas não coincidem.";
             return error;
           }
-        
+
           form.setError("email", {
             type: "value",
             message: er.response.data.message,
@@ -174,14 +182,17 @@ const RegisterPage = () => {
               </FormItem>
             )}
           />
+          <div className="flex justify-between items-center">
           {!form.formState.isSubmitting ? (
-            <Button type="submit">Entrar</Button>
+            <Button type="submit">Criar conta</Button>
           ) : (
             <Button disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Carregando
             </Button>
           )}
+          <h2>Já possui uma conta? <a className="hover:cursor-pointer hover:underline" onClick={()=>navigate("/login")}><strong>Entre</strong></a></h2>
+          </div>
         </form>
       </Form>
       <Toaster
