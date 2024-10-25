@@ -69,10 +69,10 @@ const LoginPage = () => {
 
   return (
     <>
-      <Form {...form}>
+      <Form {...form} >
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 py-44 px-72"
+          className="space-y-8 py-44 px-72 "
         >
           <FormField
             control={form.control}

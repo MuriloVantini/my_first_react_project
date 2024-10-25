@@ -3,10 +3,11 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App';
 import HomePage from './pages/home';
-import LoginPage from './pages/login';
+import LoginPage from './pages/auth/login';
 import ProtectedRoute from './api/store/verifyLoggedUser';
 import ShowPost from './pages/showPost';
 import MyProfile from './pages/my_profile';
+import RegisterPage from './pages/auth/register';
 
 
 const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage/>
+  },
+  {
+    path: '/register',
+    element: <RegisterPage/>
   }
   // {
   //   path: '/home',
