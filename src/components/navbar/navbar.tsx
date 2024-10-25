@@ -9,13 +9,32 @@ import {
 } from "../../components/ui/popover";
 import { Button } from "@/components/ui/button";
 import myAxios from "@/api/axiosInstance";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      popoverRef.current &&
+      !popoverRef.current.contains(event.target as Node)
+    ) {
+      setOpen(false);
+    }
+  };
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
 
   const token = localStorage.getItem("token");
   const handleLogout = async () => {
@@ -47,10 +66,10 @@ const Navbar = () => {
             params={{ name: "Minhas Curtidas", linkto: "/profile" }}
           />
           <Popover open={open}>
-            <PopoverTrigger onClick={()=>setOpen(true)}>
+            <PopoverTrigger onClick={() => setOpen(!open)}>
               <CircleUserRound />
             </PopoverTrigger>
-            <PopoverContent className="flex flex-col gap-2">
+            <PopoverContent ref={popoverRef} className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col items-start">
                   <span className="block text-sm text-gray-900 dark:text-gray-900">
