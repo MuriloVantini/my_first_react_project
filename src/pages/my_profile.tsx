@@ -95,7 +95,7 @@ const MyProfile = () => {
             <div>Seus comentários</div>
             {user && user.comments && user.comments.length > 0 ? (
               user.comments.map((comment) => (
-                <ContextMenu>
+                <ContextMenu key={comment.id}>
                   <ContextMenuTrigger>
                     <div className="flex items-center w-full flex-row gap-2 hover:bg-gray-100 hover:cursor-pointer rounded-md p-2">
                       <CornerDownRight strokeWidth={0.8} />
