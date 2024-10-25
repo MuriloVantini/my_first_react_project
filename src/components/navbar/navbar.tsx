@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import myAxios from "@/api/axiosInstance";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import UserModel from "@/models/userModel";
 
-const Navbar = () => {
+const Navbar = (user:UserModel) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -73,10 +74,10 @@ const Navbar = () => {
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col items-start">
                   <span className="block text-sm text-gray-900 dark:text-gray-900">
-                    Murilo Vantini
+                    {user.name}
                   </span>
                   <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-                    email@gmail.com
+                    {user.email}
                   </span>
                 </div>
               </div>
