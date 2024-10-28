@@ -15,7 +15,6 @@ import { userContext } from "@/store/userContext";
 
 const Navbar = () => {
   const { user } = useContext(userContext);
-  console.log("Usuário " + user);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);

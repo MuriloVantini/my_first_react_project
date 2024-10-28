@@ -3,7 +3,7 @@ import UserModel from "@/models/userModel";
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 const user: UserModel = {
-  id: 1,
+  id: -1,
   name: "Carregando...",
   email: "Carregando...",
   comments: [],
@@ -26,7 +26,6 @@ const UserContextProvider = ({ children }: { children: ReactNode }) => {
         });
         if (response.status === 200) {
           setUser({user: response.data.data[0]});
-          console.log(response.data.data[0]);
         }
         if (response.status !== 200) {
           throw new Error("Erro ao buscar usuário");
