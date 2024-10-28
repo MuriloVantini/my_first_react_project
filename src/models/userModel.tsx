@@ -7,6 +7,13 @@ interface UserModel {
   email: string;
   like_posts?: PostModel[];
   comments?: CommentModel[];
+  updateUser?: (
+    id: number,
+    name: string,
+    email: string,
+    like_posts?: PostModel[],
+    comments?: CommentModel[]
+  ) => void;
 }
 
 export default UserModel;
