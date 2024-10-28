@@ -8,9 +8,11 @@ import ProtectedRoute from './api/store/verifyLoggedUser';
 import ShowPost from './pages/showPost';
 import MyProfile from './pages/my_profile';
 import RegisterPage from './pages/auth/register';
+import { UserContextProvider } from './store/userContext';
 
 
 const router = createBrowserRouter([
+
   {
     path: '/',
     element: <ProtectedRoute child={<App/>}/>,
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={router} />
+  <>
+  <UserContextProvider>
+    <RouterProvider router={router} />
+  </UserContextProvider>
+  </>
 )
 

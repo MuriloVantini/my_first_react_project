@@ -9,11 +9,12 @@ import {
 } from "../../components/ui/popover";
 import { Button } from "@/components/ui/button";
 import myAxios from "@/api/axiosInstance";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserModel from "@/models/userModel";
+import { userContext } from "@/store/userContext";
 
-const Navbar = (user:UserModel) => {
+const Navbar = () => {
+  const { user } = useContext(userContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
