@@ -9,6 +9,7 @@ import ShowPost from './pages/showPost';
 import MyProfile from './pages/my_profile';
 import RegisterPage from './pages/auth/register';
 import { UserContextProvider } from './store/userContext';
+import ForgotPassword from './pages/auth/reset-password/forgot_password';
 
 
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage/>
+  },
+  {
+    path: '/forgotPassword',
+    element: <ForgotPassword/>
   }
   // {
   //   path: '/home',

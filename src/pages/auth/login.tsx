@@ -8,6 +8,7 @@ import { toast, Toaster } from "sonner";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -100,6 +101,7 @@ const LoginPage = () => {
                 <FormControl>
                   <Input type="password" placeholder="*******" {...field} />
                 </FormControl>
+                <FormDescription> <a className="hover:underline hover:cursor-pointer" onClick={()=>navigate("/forgotPassword")}>Esqueceu sua senha?</a></FormDescription>
                 <FormMessage />
               </FormItem>
             )}
