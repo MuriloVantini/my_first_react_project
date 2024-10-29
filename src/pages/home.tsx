@@ -1,6 +1,6 @@
 import myAxios from "@/api/axiosInstance";
-import CircularLoading from "@/components/loading/circularLoading";
 import PostCard from "@/components/postCard";
+import SkeletonPostCard from "@/components/skeleton_postCard";
 import PostModel from "@/models/postModel";
 import { useEffect, useState } from "react";
 
@@ -15,30 +15,42 @@ const HomePage = () => {
       try {
         const response = await myAxios.get("/post", {
           headers: { Authorization: `Bearer ${token}` },
-        }); 
+        });
         if (response.status !== 200) {
-          setError("Erro ao buscar dados"); 
+          setError("Erro ao buscar dados");
         }
-        setPosts(response.data.data); 
+        setPosts(response.data.data);
       } catch (error) {
-        setError(error as string); 
+        setError(error as string);
       } finally {
         setLoading(false); 
       }
     };
 
-    fetchData(); 
-  }, []); 
-
-  if (loading) return <CircularLoading url={myAxios.defaults.baseURL + "/post"}/>
-  if (error) return <div>Erro: {error}</div>
-
+    fetchData();
+  }, []);
+  if (loading)
+    return (
+      <div className="py-40">
+        <div className="flex flex-wrap justify-center gap-4">
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+          <SkeletonPostCard/>
+        </div>
+      </div>
+    );
+  if (error) return <div>Erro: {error}</div>;
 
   return (
     <div className="py-40">
       <div className="flex flex-wrap justify-center gap-4">
         {posts.map((item) => (
-          <PostCard {...item}/>
+          <PostCard {...item} />
         ))}
       </div>
     </div>
