@@ -10,7 +10,7 @@ const PostCard = (post: PostModel) => {
     navigate(`/post/${id}`); // Navega para a rota de detalhes do post
   };
   return (
-    <div
+    <div onClick={() => onNavigate(post.id)} 
       key={post.id}
       className="max-w-sm rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4"
     >
