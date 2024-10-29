@@ -88,7 +88,6 @@ const MyProfile = () => {
         {
           loading: "Atualizando usuário...",
           success: (data) => {
-            setTimeout(() => {}, 1000);
             resolve(data);
             const body = data.data.data;
             console.log(body);
@@ -122,13 +121,17 @@ const MyProfile = () => {
         {
           loading: "Atualizando senha...",
           success: (data) => {
-            setTimeout(() => {}, 1000);
             resolve(data);
+            setTimeout(() => {
+              passwordForm.setValue("password_current", "");
+              passwordForm.setValue("new_password", "");
+              passwordForm.setValue("new_password_confirmation", "");
+            }, 500);
             return "Senha atualizada!";
           },
           error: (ex) => {
             reject(ex);
-            return (ex.response.data.message as string);
+            return ex.response.data.message as string;
           },
           finally: () => {},
         }
