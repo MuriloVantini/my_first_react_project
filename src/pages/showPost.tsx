@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import myAxios from "@/api/axiosInstance";
 import PostModel from "@/models/postModel";
 import { useForm } from "react-hook-form";
@@ -27,6 +27,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CommentModel from "@/models/commentModel";
 import { toast } from "sonner";
+import { userContext } from "@/store/userContext";
 
 const formSchema = z.object({
   post_id: z.string(),
@@ -44,7 +45,7 @@ const ShowPost = () => {
   const [isCommenting, setIsCommenting] = useState(false);
   const [error, setError] = useState("");
   const token = localStorage.getItem("token");
-
+  const { user } = useContext(userContext);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -96,18 +97,19 @@ const ShowPost = () => {
               created_at: currentDate,
               updated_at: currentDate,
               like_comments_count: 0,
-              user: { email: "email@example.com", id: -2, name: "Você"},
+              user: { email: "email@example.com", id: -2, name: "Você" },
             };
             setComments((prevComments) => [...prevComments, newComment]);
+            const updatedComments = [...(user.comments ?? []), newComment];
+            user.comments = updatedComments;
+
             resolve(data);
             return "Comentário criado com sucesso";
           },
           error: (ex) => {
             setIsCommenting(false);
             reject(ex);
-            return (
-              "Erro no servidor. Tente novamente mais tarde."
-            );
+            return "Erro no servidor. Tente novamente mais tarde.";
           },
           finally: () => {
             setIsCommenting(false);
@@ -141,8 +143,8 @@ const ShowPost = () => {
   };
 
   if (loading)
-    return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />
-  if (error) return <div>Erro: {error}</div>
+    return <CircularLoading url={myAxios.defaults.baseURL + `/post/${id}`} />;
+  if (error) return <div>Erro: {error}</div>;
 
   return (
     <>
