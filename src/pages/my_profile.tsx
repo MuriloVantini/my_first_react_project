@@ -16,10 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import CommentModel from "@/models/commentModel";
 import { userContext } from "@/store/userContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CornerDownRight, Pencil, Trash2 } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -52,8 +53,13 @@ const passwordFormSchema = z
   });
 
 const MyProfile = () => {
+  const [comments, setComments] = useState<CommentModel[]>([]);
   const token = localStorage.getItem("token");
-  const { user } = useContext(userContext);
+  const { user, loading } = useContext(userContext);
+
+  useEffect(() => {
+    if (!loading) setComments(user.comments! || []);
+  }, [loading, user]);
 
   const userForm = useForm<z.infer<typeof userFormSchema>>({
     resolver: zodResolver(userFormSchema),
@@ -62,6 +68,7 @@ const MyProfile = () => {
       email: "",
     },
   });
+
   const passwordForm = useForm<z.infer<typeof passwordFormSchema>>({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
@@ -138,7 +145,38 @@ const MyProfile = () => {
       );
     });
   };
-
+  const deleteComment = async (id: number) => {
+    return new Promise((resolve, reject) => {
+      toast.promise(
+        myAxios.delete(`/comment/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        {
+          loading: "Excluindo...",
+          success: (data) => {
+            resolve(data);
+            setComments((prevComments) =>
+              prevComments.filter((comment) => comment.id !== id)
+            );
+            return "Comentário excluído!";
+          },
+          error: (ex) => {
+            reject(ex);
+            return ex.response.data.message as string;
+          },
+          finally: () => {},
+        }
+      );
+    });
+  };
+  if (loading)
+    return (
+        <div className="px-4 space-y-6 sm:px-6 pt-16 mb-16">
+          <div className="mx-8 my-8">
+            <h1 className="text-2xl font-bold">Carregando</h1>
+          </div>
+        </div>
+    );
   return (
     <div className="px-4 space-y-6 sm:px-6 pt-16 mb-16">
       <div className="mx-8 my-8">
@@ -261,8 +299,8 @@ const MyProfile = () => {
         <Card>
           <CardHeader>
             <div>Seus comentários</div>
-            {user && user.comments && user.comments.length > 0 ? (
-              user.comments.map((comment) => (
+            {user && comments.length > 0 ? (
+              comments.map((comment) => (
                 <ContextMenu key={comment.id}>
                   <ContextMenuTrigger>
                     <div className="flex items-center w-full flex-row gap-2 hover:bg-gray-100 hover:cursor-pointer rounded-md p-2">
@@ -273,10 +311,13 @@ const MyProfile = () => {
                     </div>
                   </ContextMenuTrigger>
                   <ContextMenuContent>
-                    <ContextMenuItem className="flex gap-2 justify-start">
+                    <ContextMenuItem
+                      className="flex gap-2 justify-start hover:cursor-pointer"
+                      onClick={() => deleteComment(comment.id)}
+                    >
                       <Trash2 /> Excluir
                     </ContextMenuItem>
-                    <ContextMenuItem className="flex gap-2 justify-start">
+                    <ContextMenuItem className="flex gap-2 justify-start hover:cursor-pointer">
                       <Pencil /> Editar
                     </ContextMenuItem>
                   </ContextMenuContent>

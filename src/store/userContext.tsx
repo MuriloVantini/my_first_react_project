@@ -11,13 +11,22 @@ const user: UserModel = {
 };
 
 interface UserContextInterface {
-  user: UserModel,
+  user: UserModel;
+  loading: boolean;
 }
-const userContext = createContext<UserContextInterface>({user});
+const userContext = createContext<UserContextInterface>({
+  user: user,
+  loading: true,
+});
 
 const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [requestedUser, setUser] = useState<UserContextInterface>({user});
+  const [requestedUser, setUser] = useState<UserContextInterface>({
+    user: user,
+    loading: true,
+  });
+
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -25,21 +34,23 @@ const UserContextProvider = ({ children }: { children: ReactNode }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.status === 200) {
-          setUser({user: response.data.data[0]});
-        }
-        if (response.status !== 200) {
-          throw new Error("Erro ao buscar usuário");
+          setUser({ user: response.data.data[0], loading: false });
         }
       } catch (error) {
-        console.log(error);
+        console.error("Erro ao buscar o usuário:", error);
       } finally {
+        setUser((prev) => ({ ...prev, loading: false }));
       }
     };
 
     fetchUser();
   }, [user]);
-  
-  return <userContext.Provider value={requestedUser}>{children}</userContext.Provider>;
+
+  return (
+    <userContext.Provider value={requestedUser}>
+      {children}
+    </userContext.Provider>
+  );
 };
 
 export { UserContextProvider, userContext };
